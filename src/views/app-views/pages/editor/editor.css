@@ -1,0 +1,41 @@
+.container-editor {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.editor-start {
+    width: 47%;
+    border-radius: 20px;
+    background-color: white;
+    padding: 10px;
+}
+
+.editor-end {
+    width: 47%;
+    border-radius: 20px;
+    background-color: white;
+    padding: 10px;
+}
+
+.grid-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(7, auto);
+    grid-template-rows: repeat(7, auto);
+}
+
+.grid-element {
+    border: 1px solid grey;
+    border-radius: 10px;
+    min-height: 70px;
+}
+
+.container-table {
+    border:1px solid grey;
+    border-radius: 15px;
+    padding: 5px;
+    text-align: center;
+    margin: 5px;
+}
+
