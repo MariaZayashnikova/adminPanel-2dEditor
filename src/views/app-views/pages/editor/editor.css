@@ -21,14 +21,12 @@
 .grid-container {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(7, auto);
-    grid-template-rows: repeat(7, auto);
+    grid-template-columns: repeat(12, 40px);
+    grid-template-rows: repeat(12, 40px);
 }
 
 .grid-element {
     border: 1px solid grey;
-    border-radius: 10px;
-    min-height: 70px;
 }
 
 .container-table {
@@ -37,5 +35,18 @@
     padding: 5px;
     text-align: center;
     margin: 5px;
+    width: max-content;
+    height: max-content;
+    z-index: 1;
+}
+
+.margin-bottom {
+    margin-bottom: 5px;
+}
+
+.backgroundColor-black {
+    background-color: black;
+    border: 1px solid black;
+    color: white;
 }
 

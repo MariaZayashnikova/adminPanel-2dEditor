@@ -6,7 +6,6 @@ import imagefourChairs from 'assets/img/fourChairs.png';
 import imagethreeChairs from 'assets/img/threeChairs.png';
 import imagewhiteChairs from 'assets/img/whiteChairs.png';
 import imagewhiteTableChairs from 'assets/img/whiteTableChairs.png';
-import fs from 'browserify-fs';
 import './editor.css';
 
 
@@ -22,46 +21,67 @@ function Editor() {
     const [grid, setGrid] = useState([]);
     const [editor, setEditor] = useState([]);
 
-
+    let fileInput = React.createRef();
     const downloadAsFile = (data) => {
         let a = document.createElement("a");
         let file = new Blob([data], { type: 'application/json' });
         a.href = URL.createObjectURL(file);
         a.download = "savedTable.txt";
         a.click();
+        message.success({ content: "Data saved successfully", duration: 2 });
     }
 
-    const saveEditor = async () => {
-        let mydata = await JSON.stringify(editor);
+    const saveEditor = () => {
+        let mydata = JSON.stringify(editor);
         downloadAsFile(mydata);
-        /* fs.writeFile("./editor.json", mydata, function () {
-            message.success({ content: "Data saved successfully", duration: 2 });
-        }); */
     }
 
-    const importEditor = async () => {
-        fs.readFile("./editor.json", 'utf-8', async function (error, data) {
-            let res = await JSON.parse(data);
-            setEditor(res);
-        });
+    const importEditor = () => {
+        let file = fileInput.current.files[0];
+        let messageError = 'Недопустимый формат файла. Пожалуйста, выберите файл, который вы сохранили в этом редакторе';
+
+        if (file.type === 'text/plain') {
+            let reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = function () {
+                let res;
+                try {
+                    res = JSON.parse(reader.result);
+
+                    if (!Array.isArray(res)) {
+                        message.error({ content: messageError, duration: 2 });
+                        return;
+                    }
+
+                    let data = ['title', 'id', 'dropp', 'img'];
+                    let checkResult = res.every(resItem => data.every(dataItem => dataItem in resItem));
+                    if (checkResult) setEditor(res);
+                    else message.error({ content: messageError, duration: 2 });
+                    // проверка на тип данных?
+                }
+                catch {
+                    message.error({ content: messageError, duration: 2 });
+                }
+            };
+            reader.onerror = function () {
+                message.error({ content: reader.error, duration: 2 });
+            };
+        } else message.error({ content: messageError, duration: 2 });
     }
 
     const createGrid = () => {
-        let arrResult = [];
-        for (let i = 2; i < 51; i++) {
-            arrResult.push(`droppable-${i}`)
+        let resultGrid = [];
+        for (let i = 2; i < 134; i++) {
+            resultGrid.push(`droppable-${i}`)
         }
-        setGrid(arrResult);
+        setGrid(resultGrid);
     }
 
     if (grid.length === 0) createGrid();
 
     const handleDrag = res => {
-        console.log(res)
-        let newState;
         if (res.source.droppableId === 'droppable-1') {
-            newState = tables;
-            newState.forEach(elem => {
+            tables.forEach(elem => {
                 if (elem.id === res.draggableId) {
                     let arr = editor;
                     let obj = Object.assign({}, elem)
@@ -71,9 +91,11 @@ function Editor() {
                     setEditor(arr);
                 }
             });
+        } else if (res.destination.droppableId === 'droppable-1') {
+            let newStateEditor = editor.filter(item => item.id !== res.draggableId);
+            setEditor(newStateEditor);
         } else {
-            newState = editor;
-            newState.forEach(elem => {
+            editor.forEach(elem => {
                 if (elem.id === res.draggableId) {
                     let arr = editor.filter(item => item.id !== elem.id);
                     let obj = Object.assign({}, elem)
@@ -85,9 +107,6 @@ function Editor() {
         }
     }
 
-    console.log(tables);
-    console.log(editor);
-
     return (
         <DragDropContext onDragEnd={result => handleDrag(result)}>
             <div className='container-editor'>
@@ -97,7 +116,7 @@ function Editor() {
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                style={{ display: 'flex', flexWrap: 'wrap', height: '100%' }}
+                                style={{ display: 'flex', flexWrap: 'wrap', height: '100%', alignItems: 'flex-start', alignContent: 'flex-start' }}
                             >
                                 {provided.placeholder}
                                 {tables.map((elem, index) => {
@@ -123,9 +142,10 @@ function Editor() {
                 </div>
                 < div className="editor-end">
                     <h4>Карта заведения</h4>
-                    <Button type="primary" onClick={() => saveEditor()}>Save</Button>
-                    <Button type="primary" onClick={() => importEditor()}>import</Button>
-                    <input type="file"></input>
+                    <div className='container-editor margin-bottom' >
+                        <Button type="primary" onClick={() => saveEditor()}>Save</Button>
+                        <input type="file" ref={fileInput} onChange={importEditor} />
+                    </div>
                     <div className='grid-container'>
                         {grid.map((elemGrid, indexGrid) => {
                             return (
@@ -146,7 +166,7 @@ function Editor() {
                                                                         ref={provided.innerRef}
                                                                         {...provided.draggableProps}
                                                                         {...provided.dragHandleProps}
-                                                                        className="container-table"
+                                                                        className="container-table backgroundColor-black"
                                                                     >
                                                                         <Image src={elem.img} alt="tables" width="60px" height="60px" preview={false} />
                                                                         <div>{elem.title}</div>
