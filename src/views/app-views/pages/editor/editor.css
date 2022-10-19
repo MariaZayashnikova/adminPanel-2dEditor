@@ -1,0 +1,52 @@
+.container-editor {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.editor-start {
+    width: 47%;
+    border-radius: 20px;
+    background-color: white;
+    padding: 10px;
+}
+
+.editor-end {
+    width: 47%;
+    border-radius: 20px;
+    background-color: white;
+    padding: 10px;
+}
+
+.grid-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(12, 40px);
+    grid-template-rows: repeat(12, 40px);
+}
+
+.grid-element {
+    border: 1px solid grey;
+}
+
+.container-table {
+    border:1px solid grey;
+    border-radius: 15px;
+    padding: 5px;
+    text-align: center;
+    margin: 5px;
+    width: max-content;
+    height: max-content;
+    z-index: 1;
+}
+
+.margin-bottom {
+    margin-bottom: 5px;
+}
+
+.backgroundColor-black {
+    background-color: black;
+    border: 1px solid black;
+    color: white;
+}
+
